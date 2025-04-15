@@ -1,6 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { parse, serialize } from "cookie-es";
 import { getHeader } from "@tanstack/react-start/server";
+import { createIsomorphicFn } from "@tanstack/react-start";
 
 export type Theme = "system" | "dark" | "light";
 type ThemeState = [Theme, (newTheme: Theme) => void];
@@ -17,10 +18,14 @@ export function useTheme() {
 
 const THEME_STORAGE_KEY = "theme";
 
+const getCookies = createIsomorphicFn()
+  .server(() => {
+    return getHeader("Cookie") ?? "";
+  })
+  .client(() => document.cookie);
+
 function getTheme(): Theme {
-  const cookieString = import.meta.env.SSR
-    ? getHeader("Cookie") ?? ""
-    : document.cookie;
+  const cookieString = getCookies();
   const cookies = parse(cookieString);
   return (cookies[THEME_STORAGE_KEY] as Theme) ?? "system";
 }
