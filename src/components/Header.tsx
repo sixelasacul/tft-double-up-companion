@@ -58,7 +58,10 @@ export function Header() {
           <ThemeIcon theme={theme} />
         </Button>
         <Button size="icon" asChild>
-          <a href="" target="_blank">
+          <a
+            href="https://github.com/sixelasacul/tft-double-up-companion"
+            target="_blank"
+          >
             <SiGithub />
           </a>
         </Button>
