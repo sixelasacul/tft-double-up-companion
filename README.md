@@ -21,3 +21,8 @@ Built with:
 ## TODO
 
 - eslint, prettier, lint-staged
+- drag'n'drop (dnd-kit) for
+  - champion priority
+  - from grid to list
+- larger champion list item
+- champion grid selected style

@@ -35,7 +35,7 @@ export function ChampionCard({ champion, onClick }: ChampionCardProps) {
             alt={name}
             loading="lazy"
           />
-          <ul className="flex flex-col flex-wrap absolute bottom-0 left-0 right-0 px-1 bg-black/50">
+          <ul className="flex flex-col flex-wrap gap-1 absolute bottom-0 left-0 right-0 py-1 bg-black/50">
             {traits.map((trait) => (
               <li key={trait.name} className="flex flex-row items-center gap-1">
                 <img
@@ -43,7 +43,9 @@ export function ChampionCard({ champion, onClick }: ChampionCardProps) {
                   className="w-4 aspect-square"
                   loading="lazy"
                 />
-                <p className="text-white font-bold text-sm">{trait.name}</p>
+                <p className="text-white font-bold text-sm leading-none">
+                  {trait.name}
+                </p>
               </li>
             ))}
           </ul>

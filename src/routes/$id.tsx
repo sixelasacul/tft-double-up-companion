@@ -22,6 +22,7 @@ import {
   ResizablePanelGroup,
 } from "~/components/ui/resizable";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { SwapProvider, useSwap } from "~/contexts/Swap";
 
 const getChampionsFn = createServerFn().handler(async () => {
   const result = await getAllDataForCurrentSet();
@@ -44,11 +45,7 @@ const getChampionsFn = createServerFn().handler(async () => {
         })),
       };
     })
-    .sort((first, second) => {
-      const costDiff = first.cost - second.cost;
-      const nameDiff = first.name.localeCompare(second.name);
-      return costDiff || nameDiff;
-    });
+    .sort((first, second) => first.name.localeCompare(second.name));
   return { champions: mappedChampions };
 });
 
@@ -67,7 +64,9 @@ function LobbyWrapper() {
     <AblyProvider client={ably.current}>
       {/* rewind to get the last sent message and rehydrate state when (re-)joining a lobby */}
       <ChannelProvider channelName={id} options={{ params: { rewind: "1" } }}>
-        <Lobby />
+        <SwapProvider>
+          <Lobby />
+        </SwapProvider>
       </ChannelProvider>
     </AblyProvider>
   );
@@ -82,56 +81,65 @@ function Lobby() {
     updateChampionPriority,
     updateChampionStarLevel,
   } = useLobbyState(id);
+  const [shouldSwap] = useSwap();
+
+  const playersPanel = (
+    <ResizablePanel defaultSize={33} minSize={33}>
+      <ResizablePanelGroup direction="vertical">
+        <ResizablePanel defaultSize={50} minSize={33}>
+          <div className="flex flex-col h-full">
+            <h2 className="text-center text-2xl">Yours</h2>
+            <ScrollArea>
+              <YourChampionList
+                champions={lobbyState.you.champions}
+                onMove={(champion, index) =>
+                  updateChampionPriority(champion, index)
+                }
+                onRemove={(champion) => updateSelectedChampions(champion)}
+                onUpdateStarLavel={(champion, starLevel) =>
+                  updateChampionStarLevel(champion, starLevel)
+                }
+              />
+            </ScrollArea>
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50} minSize={33}>
+          <div className="flex flex-col h-full">
+            <h2 className="text-center text-2xl">Partner's</h2>
+            <ScrollArea>
+              <PartnersChampionList champions={lobbyState.partner.champions} />
+            </ScrollArea>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </ResizablePanel>
+  );
+
+  const gridPanel = (
+    <ResizablePanel defaultSize={67} minSize={33}>
+      <ChampionGrid
+        champions={champions}
+        onChampionClick={(champion) =>
+          updateSelectedChampions({
+            ...champion,
+            starLevel: 1,
+          })
+        }
+      />
+    </ResizablePanel>
+  );
+
+  const leftPanel = shouldSwap ? gridPanel : playersPanel;
+  const rightPanel = shouldSwap ? playersPanel : gridPanel;
 
   return (
-    // can use onResize to save settings to local storage
     <div className="h-screen flex flex-col font-mono">
       <Header />
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={33} minSize={33}>
-          <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={50} minSize={33}>
-              <div className="flex flex-col h-full">
-                <h2 className="text-center text-2xl">Yours</h2>
-                <ScrollArea>
-                  <YourChampionList
-                    champions={lobbyState.you.champions}
-                    onMove={(champion, index) =>
-                      updateChampionPriority(champion, index)
-                    }
-                    onRemove={(champion) => updateSelectedChampions(champion)}
-                    onUpdateStarLavel={(champion, starLevel) =>
-                      updateChampionStarLevel(champion, starLevel)
-                    }
-                  />
-                </ScrollArea>
-              </div>
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={50} minSize={33}>
-              <div className="flex flex-col h-full">
-                <h2 className="text-center text-2xl">Partner's</h2>
-                <ScrollArea>
-                  <PartnersChampionList
-                    champions={lobbyState.partner.champions}
-                  />
-                </ScrollArea>
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel defaultSize={67} minSize={33}>
-          <ChampionGrid
-            champions={champions}
-            onChampionClick={(champion) =>
-              updateSelectedChampions({
-                ...champion,
-                starLevel: 1,
-              })
-            }
-          />
-        </ResizablePanel>
+      <ResizablePanelGroup direction="horizontal" autoSaveId="layout-sizes">
+        {leftPanel}
+        <ResizableHandle withHandle />
+        {rightPanel}
       </ResizablePanelGroup>
     </div>
   );

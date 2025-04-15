@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { Sun, Moon, Monitor, Check } from "lucide-react";
+import { Sun, Moon, Monitor, Check, ArrowRightLeft } from "lucide-react";
 import { useClipboard } from "use-clipboard-copy";
 import { Button } from "./ui/button";
 import { Theme, useTheme } from "~/contexts/Theme";
 import { cn } from "~/lib/utils";
+import { useSwap } from "~/contexts/Swap";
 
 function ThemeIcon({ theme }: { theme: Theme }) {
   if (theme === "dark") return <Moon />;
@@ -20,6 +21,7 @@ function getNextTheme(theme: Theme): Theme {
 
 export function Header() {
   const [theme, setTheme] = useTheme();
+  const [, toggleSwap] = useSwap();
   const { copy, copied } = useClipboard({ copiedTimeout: 750 });
 
   return (
@@ -54,6 +56,9 @@ export function Header() {
       </div>
       <h1 className="text-4xl">TFT Double up Companion</h1>
       <div className="flex flex-row gap-4">
+        <Button size="icon" onClick={toggleSwap}>
+          <ArrowRightLeft />
+        </Button>
         <Button size="icon" onClick={() => setTheme(getNextTheme(theme))}>
           <ThemeIcon theme={theme} />
         </Button>
