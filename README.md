@@ -16,6 +16,7 @@ Built with:
 - since I can't use Ably Realtime in SSR, is Start really needed? I could just deploy a function wherever I can
   - downside of this is that the function will depend on which hosting solution I use
 - how the search should behave depending on the filters? and should we filter this way?
+- what about SSE using TS Start instead of WebSockets using Ably? would need some kind of history too
 
 ## TODO
 

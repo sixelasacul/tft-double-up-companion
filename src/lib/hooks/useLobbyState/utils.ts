@@ -42,7 +42,6 @@ function findChampionIndex(
   champion: SelectedChampion
 ) {
   // used to work with `indexOf`, idk why it broke
-  console.log(selectedChampions, champion, selectedChampions.indexOf(champion));
   return selectedChampions.findIndex((c) => c.name === champion.name);
 }
 
