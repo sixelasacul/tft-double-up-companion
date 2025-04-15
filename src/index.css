@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+  --white: oklch(96.8% 0.007 247.896);
+  --black: oklch(20.8% 0.042 265.755);
+
+  --background: var(--white);
+  --secondary-background: var(--white);
+  --foreground: var(--black);
+  --main-foreground: var(--black);
+  --main: var(--white);
+  --main-muted: oklch(86.9% 0.022 252.894);
+  --danger: oklch(57.7% 0.245 27.325);
+  --border: var(--black);
+  --ring: var(--black);
+  --overlay: oklch(0% 0 0 / 0.8);
+  --shadow: 4px 4px 0px 0px var(--border);
+}
+
+[data-theme="dark"] {
+  --blacker: oklch(0% 0 0);
+
+  --background: var(--black);
+  --secondary-background: var(--black);
+  --foreground: var(--white);
+  --main-foreground: var(--white);
+  --main: var(--black);
+  --main-muted: oklch(37.2% 0.044 257.287);
+  --danger: oklch(44.4% 0.177 26.899);
+  --border: var(--blacker);
+  --ring: var(--blacker);
+  --overlay: oklch(0% 0 0 / 0.8);
+  --shadow: 4px 4px 0px 0px var(--border);
+}
+
+/* same classes as above, idk how to share them */
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    --blacker: oklch(0% 0 0);
+
+    --background: var(--black);
+    --secondary-background: var(--black);
+    --foreground: var(--white);
+    --main-foreground: var(--white);
+    --main: var(--black);
+    --main-muted: oklch(37.2% 0.044 257.287);
+    --danger: oklch(44.4% 0.177 26.899);
+    --border: var(--blacker);
+    --ring: var(--blacker);
+    --overlay: oklch(0% 0 0 / 0.8);
+    --shadow: 4px 4px 0px 0px var(--border);
+  }
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-white: var(--white);
+  --color-black: var(--black);
+  --color-main: var(--main);
+  --color-main-muted: var(--main-muted);
+  --color-danger: var(--danger);
+  --color-background: var(--background);
+  --color-secondary-background: var(--secondary-background);
+  --color-foreground: var(--foreground);
+  --color-main-foreground: var(--main-foreground);
+  --color-border: var(--border);
+  --color-overlay: var(--overlay);
+  --color-ring: var(--ring);
+
+  --color-cost-1: #3c3c41;
+  --color-cost-2: #00a741;
+  --color-cost-3: #2c7ffc;
+  --color-cost-4: #ef38ff;
+  --color-cost-5: #f4b71a;
+  --color-star: oklch(90.5% 0.182 98.111);
+  --color-star-muted: oklch(94.5% 0.129 101.54);
+
+  --font-mono: "Space Mono", monospace;
+  --font-serif: "Roboto Slab", serif;
+
+  --spacing-boxShadowX: 4px;
+  --spacing-boxShadowY: 4px;
+  --spacing-reverseBoxShadowX: -4px;
+  --spacing-reverseBoxShadowY: -4px;
+  --radius-base: 5px;
+  --shadow-shadow: var(--shadow);
+  --font-weight-base: 500;
+  --font-weight-heading: 700;
+}
