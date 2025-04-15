@@ -1,5 +1,9 @@
-import { useChannel, usePresence } from "ably/react";
-import { useEffect, useState } from "react";
+import {
+  useChannel,
+  useConnectionStateListener,
+  usePresence,
+} from "ably/react";
+import { useState } from "react";
 import { ResultAsync } from "neverthrow";
 import { type } from "arktype";
 import { SelectedChampion } from "~/lib/types/tft";
@@ -19,9 +23,13 @@ import {
 
 export function useLobbyState(id: string) {
   const [lobbyState, setLobbyState] = useState<LobbyState>(defaultLobbyState);
+  const [isConnected, setIsConnected] = useState(false);
 
   // signifies presence in the canal, that's it
   usePresence(id);
+  useConnectionStateListener("connected", () => {
+    setIsConnected(true);
+  });
   const { publish, ably } = useChannel(id, (message) => {
     const lobbyMessage = lobbyMessageType(message.data);
     if (lobbyMessage instanceof type.errors) {
@@ -37,6 +45,7 @@ export function useLobbyState(id: string) {
   const clientId = ably.auth.clientId;
 
   async function sendMessage(message: LobbyMessage) {
+    if (!isConnected) return;
     // ably doesn't provide a way to know capabilities in advance
     const result = await ResultAsync.fromPromise(
       publish({
@@ -98,6 +107,7 @@ export function useLobbyState(id: string) {
   }
 
   return {
+    isConnected,
     lobbyState,
     updateSelectedChampions,
     updateChampionPriority,

@@ -37,11 +37,20 @@ export function lobbyStateToMessage(lobbyState: LobbyState): LobbyMessage {
   return [lobbyState.you, lobbyState.partner];
 }
 
+function findChampionIndex(
+  selectedChampions: SelectedChampion[],
+  champion: SelectedChampion
+) {
+  // used to work with `indexOf`, idk why it broke
+  console.log(selectedChampions, champion, selectedChampions.indexOf(champion));
+  return selectedChampions.findIndex((c) => c.name === champion.name);
+}
+
 export function toggleChampion(
   selectedChampions: SelectedChampion[],
   championToToggle: SelectedChampion
 ): SelectedChampion[] {
-  const index = selectedChampions.indexOf(championToToggle);
+  const index = findChampionIndex(selectedChampions, championToToggle);
   if (index === -1) {
     return selectedChampions.concat(championToToggle);
   }
@@ -54,7 +63,7 @@ export function moveChampion(
   destination: number
 ): SelectedChampion[] {
   // could call toggle i guess
-  const index = selectedChampions.indexOf(championToMove);
+  const index = findChampionIndex(selectedChampions, championToMove);
   return selectedChampions
     .toSpliced(index, 1)
     .toSpliced(destination, 0, championToMove);
@@ -65,7 +74,7 @@ export function updateChampionStarLevel(
   championToUpdate: SelectedChampion,
   newStarLevel: number
 ): SelectedChampion[] {
-  const index = selectedChampions.indexOf(championToUpdate);
+  const index = findChampionIndex(selectedChampions, championToUpdate);
   return selectedChampions.with(index, {
     ...championToUpdate,
     starLevel: newStarLevel,

@@ -41,9 +41,9 @@ export function YourChampionList({
 
 export function PartnersChampionList({ champions }: ChampionListProps) {
   return (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col gap-4 pb-2">
       {champions.map((champion) => (
-        <li key={champion.name}>
+        <li key={champion.name} className="px-2">
           <ChampionCard champion={champion} />
         </li>
       ))}
