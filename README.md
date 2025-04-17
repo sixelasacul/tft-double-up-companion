@@ -26,3 +26,8 @@ Built with:
   - from grid to list
 - larger champion list item
 - champion grid selected style
+
+- search space for multiple terms
+- none = cost -> alphabetical
+
+- channel lifetime ?

@@ -1,38 +1,11 @@
 import { PlayableChampion } from "~/lib/types/tft";
 import { ChampionCard } from "./ChampionCard";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { Input } from "./ui/input";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { cn } from "~/lib/utils";
-
-type GroupBy = "none" | "cost" | "trait";
-type GroupedChampion = Record<string, PlayableChampion[]>;
-
-function groupChampion(
-  champions: PlayableChampion[],
-  by: GroupBy
-): GroupedChampion {
-  if (by === "cost") {
-    return Object.groupBy(
-      champions,
-      (champion) => `${champion.cost}-cost`
-    ) as GroupedChampion;
-  }
-
-  if (by === "trait") {
-    return champions.reduce((acc, champion) => {
-      for (const trait of champion.traits) {
-        acc[trait.name] = [...(acc[trait.name] ?? []), champion];
-      }
-      return acc;
-    }, {} as GroupedChampion);
-  }
-
-  return {
-    none: champions,
-  };
-}
+import { GroupBy, useChampionSearch } from "~/lib/hooks/useChampionSearch";
 
 const PLACEHOLDER_MAP: { [key in GroupBy]: string } = {
   none: "Search champion or trait...",
@@ -49,33 +22,11 @@ export function ChampionGrid({
   champions,
   onChampionClick,
 }: ChampionListProps) {
-  // can be debounced
-  const [search, setSearch] = useState("");
   const [group, setGroup] = useState<GroupBy>("none");
-  const preparedChampions = useMemo(() => {
-    const filtered = champions.filter((champion) => {
-      const matchesName = champion.name.toLocaleLowerCase().startsWith(search);
-      const matchesTraits = champion.traits.some((trait) =>
-        trait.name.toLocaleLowerCase().startsWith(search)
-      );
-      return matchesName || matchesTraits;
-    });
-
-    const grouped = Object.entries(groupChampion(filtered, group));
-    if (group === "none") {
-      return grouped;
-    }
-    return grouped
-      .filter(([key, champions]) => {
-        if (group === "trait") {
-          return key.toLowerCase().startsWith(search);
-        }
-        return champions.some((champion) => {
-          return champion.name.toLowerCase().startsWith(search);
-        });
-      })
-      .toSorted((first, second) => first[0].localeCompare(second[0]));
-  }, [champions, search, group]);
+  const { search, setSearch, preparedChampions } = useChampionSearch({
+    champions,
+    group,
+  });
 
   return (
     <div className="flex flex-col h-full">

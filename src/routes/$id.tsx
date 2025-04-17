@@ -45,7 +45,11 @@ const getChampionsFn = createServerFn().handler(async () => {
         })),
       };
     })
-    .sort((first, second) => first.name.localeCompare(second.name));
+    .sort((first, second) => {
+      const costDiff = first.cost - second.cost;
+      const nameDiff = first.name.localeCompare(second.name);
+      return costDiff || nameDiff;
+    });
   return { champions: mappedChampions };
 });
 
@@ -86,7 +90,7 @@ function Lobby() {
   const playersPanel = (
     <ResizablePanel defaultSize={33} minSize={33}>
       <ResizablePanelGroup direction="vertical">
-        <ResizablePanel defaultSize={50} minSize={33}>
+        <ResizablePanel defaultSize={50} minSize={25}>
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Yours</h2>
             <ScrollArea>
@@ -104,7 +108,7 @@ function Lobby() {
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50} minSize={33}>
+        <ResizablePanel defaultSize={50} minSize={25}>
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Partner's</h2>
             <ScrollArea>
