@@ -2,8 +2,9 @@ import {
   useChannel,
   useConnectionStateListener,
   usePresence,
+  usePresenceListener,
 } from "ably/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ResultAsync } from "neverthrow";
 import { type } from "arktype";
 import { SelectedChampion } from "~/lib/types/tft";
@@ -20,16 +21,26 @@ import {
   toggleChampion,
   updateChampionStarLevel as _updateChampionStarLevel,
 } from "./utils";
+import { useUpdateFeedback } from "../useUpdateFeedback";
 
-export function useLobbyState(id: string) {
+type UseLobbyStateOptions = {
+  onPartnersUpdate?: () => void;
+};
+
+export function useLobbyState(
+  id: string,
+  { onPartnersUpdate }: UseLobbyStateOptions = {}
+) {
   const [lobbyState, setLobbyState] = useState<LobbyState>(defaultLobbyState);
   const [isConnected, setIsConnected] = useState(false);
+  const {shouldShowUpdateFeedback, triggerUpdateFeedback} = useUpdateFeedback({delay: 1000})
 
   // signifies presence in the canal, that's it
   usePresence(id);
   useConnectionStateListener("connected", () => {
     setIsConnected(true);
   });
+  const { presenceData } = usePresenceListener(id);
   const { publish, ably } = useChannel(id, (message) => {
     const lobbyMessage = lobbyMessageType(message.data);
     if (lobbyMessage instanceof type.errors) {
@@ -40,9 +51,17 @@ export function useLobbyState(id: string) {
       );
       return;
     }
+    if (message.clientId !== clientId) {
+      onPartnersUpdate?.();
+      triggerUpdateFeedback()
+    }
     setLobbyState(messageToLobbyState(message.data, clientId));
   });
+
   const clientId = ably.auth.clientId;
+  const isPartnerConnected = presenceData.some(
+    (user) => user.clientId !== clientId
+  );
 
   async function sendMessage(message: LobbyMessage) {
     if (!isConnected) return;
@@ -107,8 +126,10 @@ export function useLobbyState(id: string) {
   }
 
   return {
-    isConnected,
     lobbyState,
+    isConnected,
+    isPartnerConnected,
+    shouldShowUpdateFeedback,
     updateSelectedChampions,
     updateChampionPriority,
     updateChampionStarLevel,

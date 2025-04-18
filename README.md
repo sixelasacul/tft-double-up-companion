@@ -28,6 +28,9 @@ Built with:
 - champion grid selected style
 
 - search space for multiple terms
-- none = cost -> alphabetical
+  - and/or? based on champion or traits? or using characters?
+  - fuse.js
+  - 2 searches: champions vs traits?
 
-- channel lifetime ?
+- update colors
+

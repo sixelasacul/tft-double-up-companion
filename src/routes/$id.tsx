@@ -11,6 +11,7 @@ import {
 } from "~/lib/api/tft";
 import { useLobbyState } from "~/lib/hooks/useLobbyState";
 import {
+  LoadingChampionList,
   PartnersChampionList,
   YourChampionList,
 } from "~/components/ChampionList";
@@ -81,6 +82,9 @@ function Lobby() {
   const { champions } = Route.useLoaderData();
   const {
     lobbyState,
+    isConnected,
+    isPartnerConnected,
+    shouldShowUpdateFeedback,
     updateSelectedChampions,
     updateChampionPriority,
     updateChampionStarLevel,
@@ -94,16 +98,20 @@ function Lobby() {
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Yours</h2>
             <ScrollArea>
-              <YourChampionList
-                champions={lobbyState.you.champions}
-                onMove={(champion, index) =>
-                  updateChampionPriority(champion, index)
-                }
-                onRemove={(champion) => updateSelectedChampions(champion)}
-                onUpdateStarLavel={(champion, starLevel) =>
-                  updateChampionStarLevel(champion, starLevel)
-                }
-              />
+              {isConnected ? (
+                <YourChampionList
+                  champions={lobbyState.you.champions}
+                  onMove={(champion, index) =>
+                    updateChampionPriority(champion, index)
+                  }
+                  onRemove={(champion) => updateSelectedChampions(champion)}
+                  onUpdateStarLavel={(champion, starLevel) =>
+                    updateChampionStarLevel(champion, starLevel)
+                  }
+                />
+              ) : (
+                <LoadingChampionList />
+              )}
             </ScrollArea>
           </div>
         </ResizablePanel>
@@ -111,8 +119,26 @@ function Lobby() {
         <ResizablePanel defaultSize={50} minSize={25}>
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Partner's</h2>
-            <ScrollArea>
-              <PartnersChampionList champions={lobbyState.partner.champions} />
+            <ScrollArea className="relative">
+              {isConnected ? (
+                <>
+                  <PartnersChampionList
+                    champions={lobbyState.partner.champions}
+                  />
+                  {isPartnerConnected || (
+                    <p className="text-lg text-center">
+                      No one's here. Use the button on top to share your lobby
+                      with them.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <LoadingChampionList />
+              )}
+            <div
+              data-update={shouldShowUpdateFeedback}
+              className="absolute inset-0 data-[update=true]:bg-background data-[update=true]:animate-update"
+            ></div>
             </ScrollArea>
           </div>
         </ResizablePanel>
