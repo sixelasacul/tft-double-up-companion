@@ -28,6 +28,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cookie-es": "^2.0.0",
+    "fuse.js": "^7.1.0",
     "lucide-react": "^0.487.0",
     "neverthrow": "^8.2.0",
     "ofetch": "^1.4.1",

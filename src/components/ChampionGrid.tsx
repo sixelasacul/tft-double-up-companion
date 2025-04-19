@@ -9,7 +9,6 @@ import { GroupBy, useChampionSearch } from "~/lib/hooks/useChampionSearch";
 
 const PLACEHOLDER_MAP: { [key in GroupBy]: string } = {
   none: "Search champion or trait...",
-  cost: "Search champion...",
   trait: "Search trait...",
 };
 
@@ -45,12 +44,21 @@ export function ChampionGrid({
           }
         >
           <ToggleGroupItem value="none">None</ToggleGroupItem>
-          <ToggleGroupItem value="cost">By cost</ToggleGroupItem>
           <ToggleGroupItem value="trait">By trait</ToggleGroupItem>
         </ToggleGroup>
       </div>
       <ScrollArea>
-        <ul className={cn("flex flex-col gap-2", group === "none" && "pt-2")}>
+              <ul className="flex flex-row gap-4 flex-wrap px-2">
+                {preparedChampions.map((champion) => (
+                  <li key={champion.name}>
+                    <ChampionCard
+                      champion={champion}
+                      onClick={() => onChampionClick?.(champion)}
+                    />
+                  </li>
+                ))}
+              </ul>
+        {/* <ul className={cn("flex flex-col gap-2", group === "none" && "pt-2")}>
           {preparedChampions.map(([groupName, champions]) => (
             <li
               key={groupName}
@@ -69,7 +77,7 @@ export function ChampionGrid({
               </ul>
             </li>
           ))}
-        </ul>
+        </ul> */}
       </ScrollArea>
     </div>
   );

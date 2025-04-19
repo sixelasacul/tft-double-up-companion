@@ -1,19 +1,13 @@
+import {Expression} from "fuse.js";
 import { PlayableChampion } from "~/lib/types/tft";
 
-export type GroupBy = "none" | "cost" | "trait";
+export type GroupBy = "none" | "trait";
 type GroupedChampion = Record<string, PlayableChampion[]>;
 
 export function groupChampion(
   champions: PlayableChampion[],
   by: GroupBy
 ): GroupedChampion {
-  if (by === "cost") {
-    return Object.groupBy(
-      champions,
-      (champion) => `${champion.cost}-cost`
-    ) as GroupedChampion;
-  }
-
   if (by === "trait") {
     return champions.reduce((acc, champion) => {
       for (const trait of champion.traits) {
@@ -44,4 +38,12 @@ export function matchesByNameOrTraits(
     champion.traits.some((trait) => normalize(trait.name).includes(term))
   );
   return matchesName || matchesTraits;
+}
+
+// https://www.fusejs.io/examples.html#extended-search
+// From the docs: White space acts as an AND operator, while a single pipe (|)
+// character acts as an OR operator.
+// in my case, i need to do some transformation as i want spaces for ors and + for ands
+export function prepareSearch(search: string) {
+  return search.replace(' ', '|').replace('+', ' ')
 }
