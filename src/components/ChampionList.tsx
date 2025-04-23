@@ -1,5 +1,6 @@
 import { SelectedChampion } from "~/lib/types/tft";
-import { ChampionCard } from "./SelectedChampionCard";
+import { SelectedChampionCard } from "./SelectedChampionCard";
+import { PropsWithChildren } from "react";
 
 type ChampionListProps = {
   champions: SelectedChampion[];
@@ -11,6 +12,13 @@ type YourChampionListProps = ChampionListProps & {
   onUpdateStarLavel: (champion: SelectedChampion, starLevel: number) => void;
 };
 
+function ChampionListContainer({ children }: PropsWithChildren) {
+  return <ul className="flex flex-col gap-4 pb-2">{children}</ul>;
+}
+function ChampionListItemContainer({ children }: PropsWithChildren) {
+  return <li className="px-2">{children}</li>;
+}
+
 export function YourChampionList({
   champions,
   onMove,
@@ -18,10 +26,10 @@ export function YourChampionList({
   onUpdateStarLavel,
 }: YourChampionListProps) {
   return (
-    <ul className="flex flex-col gap-4 pb-2">
+    <ChampionListContainer>
       {champions.map((champion, index) => (
-        <li key={champion.name} className="px-2">
-          <ChampionCard
+        <ChampionListItemContainer key={champion.name}>
+          <SelectedChampionCard
             canEdit
             champion={champion}
             canMoveUp={index > 0}
@@ -33,20 +41,30 @@ export function YourChampionList({
               onUpdateStarLavel(champion, starLevel)
             }
           />
-        </li>
+        </ChampionListItemContainer>
       ))}
-    </ul>
+    </ChampionListContainer>
   );
 }
 
 export function PartnersChampionList({ champions }: ChampionListProps) {
   return (
-    <ul className="flex flex-col gap-4 pb-2">
+    <ChampionListContainer>
       {champions.map((champion) => (
-        <li key={champion.name} className="px-2">
-          <ChampionCard champion={champion} />
-        </li>
+        <ChampionListItemContainer key={champion.name}>
+          <SelectedChampionCard champion={champion} />
+        </ChampionListItemContainer>
       ))}
-    </ul>
+    </ChampionListContainer>
+  );
+}
+
+export function LoadingChampionList() {
+  return (
+    <ChampionListContainer>
+      <ChampionListItemContainer>
+        <SelectedChampionCard.Loading />
+      </ChampionListItemContainer>
+    </ChampionListContainer>
   );
 }

@@ -7,6 +7,7 @@ import {
   championCardCostClassName,
 } from "./ChampionCardCost";
 import { StarLevel } from "./StarLevel";
+import { Skeleton } from "./ui/skeleton";
 
 type ActionsProps =
   | {
@@ -73,7 +74,7 @@ function Actions({
   );
 }
 
-export function ChampionCard(props: ActionsProps) {
+export function SelectedChampionCard(props: ActionsProps) {
   const { cost, tileIcon, name, traits } = props.champion;
 
   return (
@@ -118,3 +119,21 @@ export function ChampionCard(props: ActionsProps) {
     </div>
   );
 }
+
+function Loading() {
+  return (
+      <div className="flex flex-row gap-2">
+        <Skeleton className="w-16 aspect-square" />
+        <div className="flex flex-col gap-4">
+          <Skeleton className="w-24 h-6" />
+          <div className="flex flex-row gap-4">
+            <Skeleton className="w-12 h-4" />
+            <Skeleton className="w-12 h-4" />
+            <Skeleton className="w-12 h-4" />
+          </div>
+        </div>
+      </div>
+  );
+}
+
+SelectedChampionCard.Loading = Loading;

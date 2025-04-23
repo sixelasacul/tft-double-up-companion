@@ -11,6 +11,7 @@ import {
 } from "~/lib/api/tft";
 import { useLobbyState } from "~/lib/hooks/useLobbyState";
 import {
+  LoadingChampionList,
   PartnersChampionList,
   YourChampionList,
 } from "~/components/ChampionList";
@@ -45,7 +46,11 @@ const getChampionsFn = createServerFn().handler(async () => {
         })),
       };
     })
-    .sort((first, second) => first.name.localeCompare(second.name));
+    .sort((first, second) => {
+      const costDiff = first.cost - second.cost;
+      const nameDiff = first.name.localeCompare(second.name);
+      return costDiff || nameDiff;
+    });
   return { champions: mappedChampions };
 });
 
@@ -77,6 +82,9 @@ function Lobby() {
   const { champions } = Route.useLoaderData();
   const {
     lobbyState,
+    isConnected,
+    isPartnerConnected,
+    shouldShowUpdateFeedback,
     updateSelectedChampions,
     updateChampionPriority,
     updateChampionStarLevel,
@@ -86,29 +94,51 @@ function Lobby() {
   const playersPanel = (
     <ResizablePanel defaultSize={33} minSize={33}>
       <ResizablePanelGroup direction="vertical">
-        <ResizablePanel defaultSize={50} minSize={33}>
+        <ResizablePanel defaultSize={50} minSize={25}>
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Yours</h2>
             <ScrollArea>
-              <YourChampionList
-                champions={lobbyState.you.champions}
-                onMove={(champion, index) =>
-                  updateChampionPriority(champion, index)
-                }
-                onRemove={(champion) => updateSelectedChampions(champion)}
-                onUpdateStarLavel={(champion, starLevel) =>
-                  updateChampionStarLevel(champion, starLevel)
-                }
-              />
+              {isConnected ? (
+                <YourChampionList
+                  champions={lobbyState.you.champions}
+                  onMove={(champion, index) =>
+                    updateChampionPriority(champion, index)
+                  }
+                  onRemove={(champion) => updateSelectedChampions(champion)}
+                  onUpdateStarLavel={(champion, starLevel) =>
+                    updateChampionStarLevel(champion, starLevel)
+                  }
+                />
+              ) : (
+                <LoadingChampionList />
+              )}
             </ScrollArea>
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50} minSize={33}>
+        <ResizablePanel defaultSize={50} minSize={25}>
           <div className="flex flex-col h-full">
             <h2 className="text-center text-2xl">Partner's</h2>
-            <ScrollArea>
-              <PartnersChampionList champions={lobbyState.partner.champions} />
+            <ScrollArea className="relative">
+              {isConnected ? (
+                <>
+                  <PartnersChampionList
+                    champions={lobbyState.partner.champions}
+                  />
+                  {isPartnerConnected || (
+                    <p className="text-lg text-center">
+                      No one's here. Use the button on top to share your lobby
+                      with them.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <LoadingChampionList />
+              )}
+            <div
+              data-update={shouldShowUpdateFeedback}
+              className="absolute inset-0 data-[update=true]:bg-background data-[update=true]:animate-update"
+            ></div>
             </ScrollArea>
           </div>
         </ResizablePanel>
