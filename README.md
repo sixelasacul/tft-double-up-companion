@@ -27,11 +27,6 @@ Built with:
 - larger champion list item
 - champion grid selected style
 
-- search space for multiple terms
-  - and/or? based on champion or traits? or using characters?
-  - fuse.js
-  - 2 searches: champions vs traits?
-
 - update colors
 
 - add a quick about page, to state that it's using some riot assets through community dragon
@@ -39,4 +34,3 @@ Built with:
     - CommunityDragon was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
   - + some more explanations on how to use the tool perhaps?
   - link in header
-
