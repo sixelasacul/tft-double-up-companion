@@ -2,3 +2,4 @@ node_modules
 src/routeTree.gen.ts
 .output
 .vinxi
+.env
