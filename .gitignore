@@ -1,5 +1,4 @@
 node_modules
-.env*.local
 src/routeTree.gen.ts
 .output
 .vinxi
