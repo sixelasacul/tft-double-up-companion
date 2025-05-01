@@ -13,7 +13,7 @@ export const APIRoute = createAPIFileRoute("/api/$id/auth")({
     setCookie(CLIENT_ID_COOKIE, clientId);
 
     const ably = new Ably.Rest({
-      key: import.meta.env.VITE_ABLY_API_KEY,
+      key: process.env.ABLY_API_KEY,
     });
 
     // this is to avoid more people to come and hijack a lobby
