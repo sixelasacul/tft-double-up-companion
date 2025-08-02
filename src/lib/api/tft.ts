@@ -40,7 +40,7 @@ async function getLatestTftSetData() {
   return okAsync(data);
 }
 
-export const CURRENT_SET_NUMBER = 14;
+export const CURRENT_SET_NUMBER = 15;
 
 const playableChampionsType = playableChampionType.array();
 export async function getAllDataForCurrentSet() {
@@ -59,7 +59,7 @@ export async function getAllDataForCurrentSet() {
   }
 
   const filteredChampions = currentSet.champions
-    .filter((champion) => champion.role !== null)
+    .filter((champion) => champion.traits.length > 0)
     .map((champion) => ({
       ...champion,
       traits: champion.traits.map((trait) => ({
