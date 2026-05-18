@@ -59,7 +59,7 @@ export async function getAllDataForCurrentSet() {
   }
 
   const filteredChampions = currentSet.champions
-    .filter((champion) => champion.traits.length > 0)
+    .filter((champion) => champion.role !== null && champion.traits.length > 0)
     .map((champion) => ({
       ...champion,
       traits: champion.traits.map((trait) => ({
