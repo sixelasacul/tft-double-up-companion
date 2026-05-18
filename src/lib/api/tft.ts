@@ -40,7 +40,7 @@ async function getLatestTftSetData() {
   return okAsync(data);
 }
 
-export const CURRENT_SET_NUMBER = 15;
+export const CURRENT_SET_NUMBER = 17;
 
 const playableChampionsType = playableChampionType.array();
 export async function getAllDataForCurrentSet() {
