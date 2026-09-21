@@ -8,6 +8,7 @@ import {
 } from "./ChampionCardCost";
 import { StarLevel } from "./StarLevel";
 import { Skeleton } from "./ui/skeleton";
+import { ImageWithFallback } from "./ImageWithFallback";
 
 type ActionsProps =
   | {
@@ -43,10 +44,6 @@ function Actions({
 }: ActionsProps) {
   return (
     <div className="flex flex-row gap-2">
-      <StarLevel
-        starLevel={champion.starLevel}
-        onUpdateStarLevel={canEdit ? onUpdateStarLavel : undefined}
-      />
       {canEdit && (
         <>
           <Button
@@ -75,7 +72,7 @@ function Actions({
 }
 
 export function SelectedChampionCard(props: ActionsProps) {
-  const { cost, tileIcon, name, traits } = props.champion;
+  const { cost, name, traits, tileIcons } = props.champion;
 
   return (
     <div className="relative select-none @container">
@@ -87,9 +84,9 @@ export function SelectedChampionCard(props: ActionsProps) {
           championCardCostClassName
         )}
       >
-        <img
+        <ImageWithFallback
           className="w-24 @2xl:w-16 aspect-1/1"
-          src={tileIcon}
+          srcs={tileIcons}
           alt="image"
           loading="lazy"
         />

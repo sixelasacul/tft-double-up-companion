@@ -32,5 +32,5 @@ Built with:
 - add a quick about page, to state that it's using some riot assets through community dragon
   - probably using the same verbiage btw
     - CommunityDragon was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
-  - + some more explanations on how to use the tool perhaps?
+  - - some more explanations on how to use the tool perhaps?
   - link in header

@@ -4,7 +4,7 @@ import {
   ChampionCardCost,
   championCardCostClassName,
 } from "./ChampionCardCost";
-import { useState } from "react";
+import { ImageWithFallback } from "./ImageWithFallback";
 
 type ChampionCardProps = {
   champion: PlayableChampion;
@@ -13,13 +13,6 @@ type ChampionCardProps = {
 
 export function ChampionCard({ champion, onClick }: ChampionCardProps) {
   const { cost, tileIcons, name, traits } = champion;
-  const [tileIconIndex, setTileIconIndex] = useState(0)
-
-  function loadNextTileIcon() {
-    if (tileIconIndex < tileIcons.length - 1) {
-      setTileIconIndex(prev => prev + 1)
-    }
-  }
 
   return (
     // champion image is a 128px square
@@ -38,12 +31,11 @@ export function ChampionCard({ champion, onClick }: ChampionCardProps) {
         )}
       >
         <div className="relative">
-          <img
+          <ImageWithFallback
             className="w-32 aspect-1/1"
-            src={tileIcons[tileIconIndex]}
+            srcs={tileIcons}
             alt={name}
             loading="lazy"
-            onError={loadNextTileIcon}
           />
           <ul className="flex flex-col flex-wrap gap-1 absolute bottom-0 left-0 right-0 py-1 bg-black/50">
             {traits.map((trait) => (
