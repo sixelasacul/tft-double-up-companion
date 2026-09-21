@@ -4,6 +4,7 @@ export const championType = type({
   name: "string | null",
   role: "string | null",
   tileIcon: "string | null",
+  squareIcon: "string | null",
   cost: "number",
   traits: "string[]",
 });
@@ -17,8 +18,7 @@ export type Trait = typeof traitType.infer;
 
 export const playableChampionType = type({
   name: "string",
-  // role: "string",
-  tileIcon: "string",
+  tileIcons: "string[]",
   cost: "number",
   traits: traitType.array(),
 });
