@@ -17,7 +17,7 @@ export type Trait = typeof traitType.infer;
 
 export const playableChampionType = type({
   name: "string",
-  role: "string",
+  // role: "string",
   tileIcon: "string",
   cost: "number",
   traits: traitType.array(),
