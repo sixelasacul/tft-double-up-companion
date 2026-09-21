@@ -6,8 +6,6 @@ import { useRef } from "react";
 import { createServerFn } from "@tanstack/react-start";
 import {
   getAllDataForCurrentSet,
-  getChampionImage,
-  getTraitImage,
 } from "~/lib/api/tft";
 import { useLobbyState } from "~/lib/hooks/useLobbyState";
 import {
@@ -32,18 +30,15 @@ const getChampionsFn = createServerFn().handler(async () => {
   }
   const { champions } = result.value;
   // remove unnecessary properties, less data to send
+  // should handle images here too
   const mappedChampions = champions
     .map((champion) => {
-      const { cost, name, role, traits } = champion;
+      const { cost, name, traits, tileIcons } = champion;
       return {
         cost,
         name,
-        role,
-        tileIcon: getChampionImage(champion),
-        traits: traits.map((trait) => ({
-          name: trait.name,
-          icon: getTraitImage(trait),
-        })),
+        traits,
+        tileIcons,
       };
     })
     .sort((first, second) => {

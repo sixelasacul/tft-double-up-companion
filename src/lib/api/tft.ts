@@ -1,12 +1,12 @@
-import { Trait } from "./../types/tft";
 import { errAsync, okAsync, ResultAsync } from "neverthrow";
 import { FetchError, ofetch } from "ofetch";
 import {
+  Champion, Trait,
   communityDragonResponseType,
-  PlayableChampion,
   playableChampionType,
 } from "../types/tft";
 import { type } from "arktype";
+import { join, basename, dirname} from 'node:path'
 
 // from https://www.communitydragon.org
 
@@ -40,7 +40,7 @@ async function getLatestTftSetData() {
   return okAsync(data);
 }
 
-export const CURRENT_SET_NUMBER = 17;
+export const CURRENT_SET_NUMBER = 18;
 
 const playableChampionsType = playableChampionType.array();
 export async function getAllDataForCurrentSet() {
@@ -59,12 +59,18 @@ export async function getAllDataForCurrentSet() {
   }
 
   const filteredChampions = currentSet.champions
-    .filter((champion) => champion.role !== null && champion.traits.length > 0)
+    .filter((champion) => champion.traits.length > 0)
     .map((champion) => ({
       ...champion,
+      // it made sense to have the icons handled in the server function rather
+      // than the api, it's just that the types aren't correct
+      // ChampionResponse (may have null and non champions)
+      // -> APIChampion (only playable champions with full properties)
+      // -> PlayableChampion (Client ready data)
+      tileIcons: getChampionIcons(champion),
       traits: champion.traits.map((trait) => ({
         name: trait,
-        icon: currentSet.traits.find((t) => t.name === trait)?.icon,
+        icon: getTraitIcon(currentSet.traits.find((t) => t.name === trait)!),
       })),
     }));
   const playableChampions = playableChampionsType(filteredChampions);
@@ -75,12 +81,30 @@ export async function getAllDataForCurrentSet() {
   return okAsync({ champions: playableChampions, traits: currentSet.traits });
 }
 
-export function getChampionImage(champion: PlayableChampion) {
-  const assetUrl = champion.tileIcon.toLowerCase().replace(".tex", ".jpg");
-  return `${baseAssetsURL}/${assetUrl}`;
+const SUFFIX = ".tft_set18"
+export function getChampionIcons(champion: Champion) {
+  const tileIcon = champion.tileIcon ?? ''
+  const filename = basename(tileIcon.toLowerCase()).replace(".tex", `${SUFFIX}.jpg`)
+  const folder = dirname(tileIcon.toLowerCase())
+
+
+  const squareIcon = champion.squareIcon ?? ''
+  const squareFilename = basename(squareIcon.toLowerCase()).replace(".tex", ".png")
+  const squareFolder = dirname(squareIcon.toLowerCase())
+
+  return [
+    // as expected
+    `${baseAssetsURL}/${folder}/${filename}`,
+    // sometimes the path points to the hud folder when not needed
+    `${baseAssetsURL}/${join(folder, '..')}/${filename}`,
+    // and sometimes the path should point to the hud folder but it's not the case
+    `${baseAssetsURL}/${join(folder, 'hud')}/${filename}`,
+    // if nothing works, we look at the squareIcon instead
+    `${baseAssetsURL}/${squareFolder}/${squareFilename}`,
+  ];
 }
 
-export function getTraitImage(trait: Trait) {
-  const assetUrl = trait.icon.toLowerCase().replace(".tex", ".png");
+function getTraitIcon(trait: Trait) {
+  const assetUrl = trait.icon.toLowerCase().replace(".tex", `${SUFFIX}.png`);
   return `${baseAssetsURL}/${assetUrl}`;
 }
