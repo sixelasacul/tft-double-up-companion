@@ -15,11 +15,6 @@ export function ChampionCard({ champion, onClick }: ChampionCardProps) {
   const { cost, tileIcons, name, traits } = champion;
   const [tileIconIndex, setTileIconIndex] = useState(0)
 
-
-  if (name === 'Mama Beak') {
-    console.log(tileIcons)
-  }
-
   function loadNextTileIcon() {
     if (tileIconIndex < tileIcons.length - 1) {
       setTileIconIndex(prev => prev + 1)
